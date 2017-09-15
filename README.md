@@ -41,3 +41,7 @@ dongxu:tidb-cluster/ (master) $ echo store | ./bin/pd-ctl  | jq ".stores[].store
   "state_name": "Up"
 }
 ```
+
+TODO:
+1. Aliveness check
+2. Setup dashboard(grafana/prometheus)
