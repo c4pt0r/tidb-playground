@@ -1,6 +1,6 @@
-./log
-./data
-./pid
+log/
+data/
+pid/
 pd-ctl
 pd-recover
 pd-server
