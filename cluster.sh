@@ -83,25 +83,31 @@ start_all() {
     stop_all
     init
 
-    echo 'Lauching PD server...'
+    echo "Lauching PD server...$PD_ADDR"
         launch_pd
     sleep 3
 
-    echo 'Lauching TiKV servers...'
     id=0
     while read kv; do
         id=$((id+1))
+        echo "Lauching TiKV server $id...$kv"
         launch_tikv $kv $id $PD_ADDR
     done < tikvs
     sleep 3
 
-    echo 'Lauching TiDB server...'
+    echo "Lauching TiDB server...$TIDB_ADDR"
         launch_tidb
     sleep 3
 
-    echo 'Start local cluster successfully...Enjoy it!'
-    sleep 3
-
+    echo "Start local cluster successfully...Enjoy it!"
+    echo
+    echo "use MySQL client to connect:"
+    echo $TIDB_ADDR | sed -e "s/:/ /" | while read ip port
+    do
+        echo "mysql --host $ip -P $port -u root test"
+    done
+    echo
+    echo "tail logs:"
     echo "tail -f $LOG_DIR/tidb.log $LOG_DIR/pd.log $LOG_DIR/tikv.log.*"
 }
 
