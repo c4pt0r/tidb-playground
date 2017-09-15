@@ -12,6 +12,14 @@ LOG_DIR=`pwd`/log
 DATA_DIR=`pwd`/data
 PID_DIR=`pwd`/pid
 
+download_binaries() {
+    mkdir .download
+    cd .download
+        wget http://download.pingcap.org/tidb-latest-linux-amd64.tar.gz
+        tar -xzf tidb-latest-linux-amd64.tar.gz
+        cp tidb-latest-linux-amd64/bin/* $BIN_DIR/
+    cd -
+}
 
 init() {
     mkdir -p $DATA_DIR
@@ -96,6 +104,15 @@ start_all() {
 
     echo "tail -f $LOG_DIR/tidb.log $LOG_DIR/pd.log $LOG_DIR/tikv.log.*"
 }
+
+
+# check binaries
+if [ -f $BIN_DIR/tikv-server -a -f $BIN_DIR/tidb-server -a -f \
+    $BIN_DIR/pd-server ]; then
+    :
+else
+    download_binaries
+fi
 
 case $1 in
     start) start_all ;;
