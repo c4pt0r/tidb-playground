@@ -1,0 +1,9 @@
+./log
+./data
+./pid
+pd-ctl
+pd-recover
+pd-server
+pd-tso-bench
+tidb-server
+tikv-server
