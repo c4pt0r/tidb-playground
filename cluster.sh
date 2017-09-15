@@ -47,7 +47,7 @@ clean_all() {
 launch_tidb() {
     echo $TIDB_ADDR | sed -e "s/:/ /" | while read ip port
     do
-        nohup $BIN_DIR/tidb-server -host $ip \
+        $BIN_DIR/tidb-server -host $ip \
             -P $port \
             -store tikv://$PD_ADDR/pd \
             -log-file $LOG_DIR/tidb.log \
@@ -57,7 +57,7 @@ launch_tidb() {
 }
 
 launch_pd() {
-    nohup $BIN_DIR/pd-server \
+    $BIN_DIR/pd-server \
         -client-urls http://$PD_ADDR \
         -data-dir $DATA_DIR/pd \
         -log-file $LOG_DIR/pd.log \
@@ -69,7 +69,7 @@ launch_tikv() {
     addr=$1
     id=$2
     pd=$3
-    nohup $BIN_DIR/tikv-server -C $CONF_DIR/tikv.toml \
+    $BIN_DIR/tikv-server -C $CONF_DIR/tikv.toml \
         --addr $addr \
         -L $LOG_LEVEL \
         -s $DATA_DIR/tikv$id \
