@@ -12,6 +12,7 @@ LOG_DIR=`pwd`/log
 DATA_DIR=`pwd`/data
 PID_DIR=`pwd`/pid
 
+# TODO linux only, should download correct binaries according to system
 download_binaries() {
     mkdir .download
     cd .download
