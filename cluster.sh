@@ -61,7 +61,7 @@ launch_pd() {
         -client-urls http://$PD_ADDR \
         -data-dir $DATA_DIR/pd \
         -log-file $LOG_DIR/pd.log \
-        &> /dev/null &
+        > /dev/null &
     echo $! >> $PID_DIR/pids
 }
 
@@ -87,7 +87,7 @@ start_all() {
     launch_pd
     # check if pd is alive
     alive=0
-    for i in {1..5}
+    for i in `seq 1 5`
     do
         echo "checking pd status..."
         sleep 1
@@ -105,7 +105,6 @@ start_all() {
         echo "Launching PD server failed..."
         exit 1
     fi
-
 
     id=0
     while read kv; do
