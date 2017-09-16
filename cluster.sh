@@ -91,7 +91,7 @@ start_all() {
     do
         echo "checking pd status..."
         sleep 1
-        $BIN_DIR/pd-ctl -d ping --pd http://$PD_ADDR &> /dev/null
+        $BIN_DIR/pd-ctl -d ping --pd http://$PD_ADDR > /dev/null
         if [ $? -eq 0 ]
         then
             echo "OK"
