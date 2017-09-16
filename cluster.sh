@@ -84,8 +84,28 @@ start_all() {
     init
 
     echo "Lauching PD server...$PD_ADDR"
-        launch_pd
-    sleep 3
+    launch_pd
+    # check if pd is alive
+    alive=0
+    for i in {1..5}
+    do
+        echo "checking pd status..."
+        sleep 1
+        $BIN_DIR/pd-ctl -d ping --pd http://$PD_ADDR &> /dev/null
+        if [ $? -eq 0 ]
+        then
+            echo "OK"
+            alive=1
+            break
+        fi
+    done
+
+    if [ $alive -eq 0 ]
+    then
+        echo "Launching PD server failed..."
+        exit 1
+    fi
+
 
     id=0
     while read kv; do
