@@ -45,12 +45,18 @@ clean_all() {
     rm -rf $PID_DIR $LOG_DIR $DATA_DIR
 }
 
-launch_tidb() {
-    echo $TIDB_ADDR | sed -e "s/:/ /" | while read ip port
+
+launch_multi_tidb() {
+    pd=$2
+    echo $1 | sed -e "s/:/ /g" | while read ip port status_port
     do
+        echo $ip $port $status_port
         $BIN_DIR/tidb-server -host $ip \
+            -advertise-address $ip \
             -P $port \
-            -store tikv://$PD_ADDR/pd \
+            -status $status_port \
+            -store tikv \
+            --path=$pd \
             -log-file $LOG_DIR/tidb.log \
             >/dev/null & 
         echo $! >> $PID_DIR/pids
@@ -80,7 +86,7 @@ launch_tikv() {
     echo $! >> $PID_DIR/pids
 }
 
-start_all() {
+start() {
     stop_all
     init
 
@@ -115,20 +121,30 @@ start_all() {
     done < tikvs
     sleep 3
 
-    echo "Lauching TiDB server...$TIDB_ADDR"
-        launch_tidb
-    sleep 3
+    
+    if [ "$1" == "all" ]; then
+        echo "Lauching TiDB server...$TIDB_ADDR"
 
-    echo "Start local cluster successfully...Enjoy it!"
-    echo
-    echo "use MySQL client to connect:"
-    echo $TIDB_ADDR | sed -e "s/:/ /" | while read ip port
-    do
-        echo "mysql --host $ip -P $port -u root test"
-    done
-    echo
-    echo "tail logs:"
-    echo "tail -f $LOG_DIR/tidb.log $LOG_DIR/pd.log $LOG_DIR/tikv.log.*"
+        while read tidb; do
+            launch_multi_tidb $tidb $PD_ADDR
+        done < tidbs
+
+        sleep 3
+
+        echo "Start local cluster successfully...Enjoy it!"
+        echo
+        echo "use MySQL client to connect:"
+        echo $TIDB_ADDR | sed -e "s/:/ /" | while read ip port
+        do
+            echo "mysql --host $ip -P $port -u root test"
+        done
+        echo
+        echo "tail logs:"
+        echo "tail -f $LOG_DIR/tidb.log $LOG_DIR/pd.log $LOG_DIR/tikv.log.*"
+    else
+        echo "tail logs:"
+        echo "tail -f $LOG_DIR/pd.log $LOG_DIR/tikv.log.*"
+    fi
 }
 
 
@@ -141,9 +157,10 @@ else
 fi
 
 case $1 in
-    start) start_all ;;
+    start) start all ;;
+    start-kv) start kv;;
     stop) stop_all ;;
     clean) clean_all ;;
-    *) echo "$0 [start|stop|clean]" ;;
+    *) echo "$0 [start|start-kv|stop|clean]" ;;
 esac
 
