@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PD_ADDR=${PD_ADDR:-"127.0.0.1:2379"}
-TIDB_ADDR=${TIDB_ADDR:-"127.0.0.1:4000"}
+#TIDB_ADDR=${TIDB_ADDR:-"127.0.0.1:4000"}
 
 # defualt settings
 LOG_LEVEL=info
@@ -123,7 +123,7 @@ start() {
 
     
     if [ "$1" == "all" ]; then
-        echo "Lauching TiDB server...$TIDB_ADDR"
+        echo "Lauching TiDB server..."
 
         while read tidb; do
             launch_multi_tidb $tidb $PD_ADDR
@@ -134,10 +134,14 @@ start() {
         echo "Start local cluster successfully...Enjoy it!"
         echo
         echo "use MySQL client to connect:"
-        echo $TIDB_ADDR | sed -e "s/:/ /" | while read ip port
-        do
-            echo "mysql --host $ip -P $port -u root test"
-        done
+
+        while read tidb; do
+            echo $tidb | sed -e "s/:/ /g" | while read ip port status_port
+            do
+                echo "mysql --host $ip -P $port -u root test"
+            done
+        done < tidbs
+
         echo
         echo "tail logs:"
         echo "tail -f $LOG_DIR/tidb.log $LOG_DIR/pd.log $LOG_DIR/tikv.log.*"
