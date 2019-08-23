@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PD_ADDR=${PD_ADDR:-"127.0.0.1:2379"}
 #TIDB_ADDR=${TIDB_ADDR:-"127.0.0.1:4000"}
