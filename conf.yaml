@@ -1,0 +1,41 @@
+cluster:
+    pd:
+        pd0:
+            ports:
+                - "2379"
+            command:
+               - --name=pd0
+        pd1:
+            ports:
+                - "2380"
+            command:
+                - --name=pd1
+        pd2:
+            ports:
+                - "2381"
+                - --name=pd2
+    tikv:
+        tikv1:
+            ports:
+                - "20160"
+            command:
+                - -C "./etc/tikv.toml"
+        tikv2:
+            ports:
+                - "20161"
+            command:
+                - -C "./etc/tikv.toml"
+        tikv3:
+            ports:
+                - "20162"
+            command:
+                - -C "./etc/tikv.toml"
+    tidb:
+        tidb1:
+            ports:
+                - "4000"
+            command:
+        tidb2:
+            ports:
+                - "4001"
+            command:
